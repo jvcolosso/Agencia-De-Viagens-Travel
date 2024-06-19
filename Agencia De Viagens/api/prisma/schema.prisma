@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model destinos{
+  id Int @id @default(autoincrement())
+  nome String @db.VarChar(255)
+  valor Decimal? @db.Decimal(10,2)
+  data DateTime? @default(now())
+  pontos pontos_turisticos[]
+  hoteis hoteis[]
+}
+
+model pontos_turisticos{
+  id Int @id @default(autoincrement())
+  nome String @db.VarChar(255)
+  endereco String @db.VarChar(255)
+  telefone String? @db.VarChar(20)
+  valor Decimal? @db.Decimal(10, 2) @default(0)
+  id_destino Int
+  destino destinos @relation(fields: [id_destino], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model hoteis{
+  id Int @id @default(autoincrement())
+  nome String @db.VarChar(255)
+  valor Decimal @db.Decimal(10, 2)
+  avaliacao String
+  email String @db.VarChar(255)
+  site String? @db.VarChar(255)
+  telefones telefones[]
+  id_destino Int
+  destino destinos @relation(fields: [id_destino], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model telefones{
+  id Int @id @default(autoincrement())
+  telefone String @db.VarChar(30) 
+  id_hotel Int
+  hotel hoteis @relation(fields: [id_hotel], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
